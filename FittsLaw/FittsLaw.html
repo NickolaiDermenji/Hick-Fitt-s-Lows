@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Закон Фиттса</title>
+    <style>
+      /* Стили для контейнера квадратов */
+      #container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f5f5f5;
+      }
+
+      h1 {
+        font-weight: bold;
+        font-size: 2em;
+        text-align: center;
+        color: black;
+        margin-bottom: 50px;
+      }
+
+      /* Стили для квадратов */
+      .square {
+        width: 150px;
+        height: 150px;
+        background-color: #ccc;
+        text-align: center;
+        line-height: 150px;
+        font-size: 24px;
+        font-weight: bold;
+        margin: 20px;
+        display: inline-block;
+        cursor: pointer;
+      }
+      .square:hover {
+        background-color: #0066CC;
+        transition: background-color 0.5s ease;
+      }
+
+    </style>
+  </head>
+  <body>
+    <h1>Выберите размер кружка!</h1>
+    <div id="container">
+      <div class="square" id="square1">5 мм</div>
+      <div class="square" id="square2">20 мм</div>
+    </div>
+
+    <script>
+      // Функция для перехода на новую страницу при клике на квадрат
+      function goToPage(squareNum) {
+        switch (squareNum) {
+          case 1:
+            localStorage.setItem("circleSize", 5);
+            break;
+          case 2:
+            localStorage.setItem("circleSize", 20);
+            break;
+          default:
+            break;
+        }
+        window.location.href = "ChooseAmountOfTrials.html";
+      }
+
+      // Назначаем обработчики событий для клика на каждом квадрате
+      document.getElementById("square1").addEventListener("click", function() {
+        goToPage(1);
+      });
+      document.getElementById("square2").addEventListener("click", function() {
+        goToPage(2);
+      });
+    </script>
+  </body>
+</html>

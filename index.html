@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Выбор теста</title>
+    <style>
+      #container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .button-link {
+        display: inline-block;
+        margin: 10px;
+        padding: 10px 20px;
+        font-size: 24px;
+        border-radius: 5px;
+        border: none;
+        text-decoration: none;
+        color: #fff;
+        cursor: pointer;
+      }
+      #hick {
+        background-color: #0066CC;
+      }
+      #fitts {
+        background-color: #CC3300;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <h1>Выберите тест!</h1>
+      <a href="HicksLaw\HicksLaw.html" id="hick" class="button-link">Закон Хика</a>
+      <a href="FittsLaw/FittsLaw.html" id="fitts" class="button-link">Закон Фиттса</a>
+    </div>
+  </body>
+</html>

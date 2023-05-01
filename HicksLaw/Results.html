@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Результаты Закона Хика</title>
+	<style>
+		table {
+			border-collapse: collapse;
+			width: 100%;
+		}
+		th, td {
+			text-align: center;
+			padding: 8px;
+			border: 1px solid black;
+		}
+		th {
+			background-color: lightgray;
+			font-weight: bold;
+		}
+		.bold {
+			font-weight: bold;
+		}
+		button {
+        text-align: center;
+        line-height: 30px;
+        height: 30px;
+        width: fit-content;
+        background-color: grey;
+        color: white;
+        font-weight: bold;
+        font-size: 0.8em;
+        border: none;
+        border-radius: 5px;
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+        cursor: pointer;
+      }
+      	button:hover {
+        background-color: #0066CC;
+        transition: background-color 0.5s ease;
+      }
+	</style>
+</head>
+<body>
+	<h1>Результаты</h1>
+	<table>
+		<tr>
+			<th>Испытание</th>
+			<th>Латентное время</th>
+			<th>Моторное время</th>
+			<th>Общее время</th>
+		</tr>
+		<script>
+			let results = JSON.parse(localStorage.getItem("results"));
+
+			let trialSum = 0;
+			let latentTimeSum = 0;
+			let motorTimeSum = 0;
+			let totalTimeSum = 0;
+
+			for (let i = 0; i < results.length; i++) {
+				let row = document.createElement("tr");
+				let trialCell = document.createElement("td");
+				trialCell.textContent = results[i].trial;
+				let latentTimeCell = document.createElement("td");
+				latentTimeCell.textContent = results[i].latentTime + " мс";
+				let motorTimeCell = document.createElement("td");
+				motorTimeCell.textContent = results[i].motorTime + " мс";
+				let totalTimeCell = document.createElement("td");
+				totalTimeCell.textContent = results[i].totalTime + " мс";
+				row.appendChild(trialCell);
+				row.appendChild(latentTimeCell);
+				row.appendChild(motorTimeCell);
+				row.appendChild(totalTimeCell);
+				document.querySelector("table").appendChild(row);
+
+				trialSum += results[i].trial;
+				latentTimeSum += results[i].latentTime;
+				motorTimeSum += results[i].motorTime;
+				totalTimeSum += results[i].totalTime;
+			}
+
+			let row = document.createElement("tr");
+			let trialCell = document.createElement("td");
+			trialCell.textContent = "Среднее";
+			trialCell.classList.add("bold");
+			let latentTimeCell = document.createElement("td");
+			latentTimeCell.textContent = (latentTimeSum / results.length).toFixed(2) + " мс";
+			latentTimeCell.classList.add("bold");
+			let motorTimeCell = document.createElement("td");
+			motorTimeCell.textContent = (motorTimeSum / results.length).toFixed(2) + " мс";
+			motorTimeCell.classList.add("bold");
+			let totalTimeCell = document.createElement("td");
+			totalTimeCell.textContent = (totalTimeSum / results.length).toFixed(2) + " мс";
+			totalTimeCell.classList.add("bold");
+			row.appendChild(trialCell);
+			row.appendChild(latentTimeCell);
+			row.appendChild(motorTimeCell);
+			row.appendChild(totalTimeCell);
+			document.querySelector("table").appendChild(row);
+
+		function exportTableToExcel() {
+				let wb = XLSX.utils.table_to_book(document.querySelector("table"), {sheet:"Результаты Закона Хика"});
+				let wbout = XLSX.write(wb, {bookType:'xlsx',  type: 'binary'});
+				function s2ab(s) {
+					var buf = new ArrayBuffer(s.length);
+					var view = new Uint8Array(buf);
+					for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+					return buf;
+				}
+				saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), 'results.xlsx');
+			}
+		</script>
+	</table>
+<br>
+	<button onclick="exportTableToExcel()">Сохранить в Excel</button>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.6/xlsx.full.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+	<button onclick="location.href='../index.html';">На начальную страницу</button>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Кол-во испытаний</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f5f5f5;
+      }
+
+      h1 {
+        font-weight: bold;
+        font-size: 2em;
+        text-align: center;
+        color: black;
+        margin-bottom: 50px;
+      }
+
+      form {
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      label {
+        font-size: 1.2em;
+        margin-bottom: 10px;
+      }
+
+      input[type="number"] {
+        font-size: 40px;
+        height: 40px;
+        width: 300px;
+        border-radius: 5px;
+        border: none;
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+        padding: 10px;
+        margin-bottom: 20px;
+      }
+
+      button {
+        height: 60px;
+        width: 200px;
+        background-color: #0066CC;
+        color: white;
+        font-weight: bold;
+        font-size: 1.2em;
+        border: none;
+        border-radius: 5px;
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <form onsubmit="return false;">
+      <h1>Введите количество испытаний!</h1>
+      <input type="number" id="trials" name="trials" min="1" required>
+      <button onclick="startExperiment()">Начать</button>
+    </form>
+
+    <script>
+      function startExperiment() {
+        let trials = document.getElementById("trials").value;
+        if (trials > 0) {
+          localStorage.setItem("trials", trials);
+          localStorage.setItem("currentTrial", 1);
+          localStorage.setItem("results", []);
+          window.location.href = "Experiment.html"; 
+        }
+      } 
+    </script>
+  </body>
+</html>

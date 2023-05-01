@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Эксперимент</title>
+    <style>
+      button {
+        text-align: center;
+        line-height: 30px;
+        height: 30px;
+        width: fit-content;
+        background-color: grey;
+        color: white;
+        font-weight: bold;
+        font-size: 0.8em;
+        border: none;
+        border-radius: 5px;
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0066CC;
+        transition: background-color 0.5s ease;
+      }
+      .circle {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background-color: lightgrey;
+        color: white;
+        font-size: 50px;
+        font-weight: bold;
+      }
+      #circle1 {
+      left: 50px;
+      }
+      #circle2 {
+        left: 210px;
+      }
+      #circle3 {
+        left: 370px;
+      }
+      #circle4 {
+        left: 530px;
+      }
+      #circle5 {
+        left: 690px;
+      }
+      #circle6 {
+        left: 850px;
+      }
+      #circle7 {
+        left: 1010px;
+      }
+      #circle8 {
+        left: 1170px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Испытание #<span id="trialNumber"></span></h1>
+    <p style="font-style: italic; color: grey;">Нажмите и удерживайте клавишу Пробел для реакции. <br> На экране появится круг с номером клавиши которую вам нужно нажать.</p>
+    <p id = "latentTime"></p>
+    <p id = "motorTime"></p>
+    <p id = "totalTime"></p>
+    <div id="circle1" class="circle">1</div>
+    <div id="circle2" class="circle">2</div>
+    <div id="circle3" class="circle">3</div>
+    <div id="circle4" class="circle">4</div>
+    <div id="circle5" class="circle">5</div>
+    <div id="circle6" class="circle">6</div>
+    <div id="circle7" class="circle">7</div>
+    <div id="circle8" class="circle">8</div>
+
+    <button id="nextButton" onclick="nextTrial()" style="display:none;">Далее</button>
+    <p id="timer">00:00:000</p>
+    
+
+
+<script>
+  let timer = document.querySelector("#timer");
+  let amountOfElements = localStorage.getItem("amountOfElements");
+  let currentTrial = localStorage.getItem("currentTrial");
+  let startTime = null;
+  let latentTime = null;
+  let motorTime = null;
+  let totalTime = null;
+  let numTrials = localStorage.getItem("trials");
+  let isSpaceDown = false;
+  let intervalId = null;
+  let randomCircleNum = null;
+  document.querySelector("#trialNumber").textContent = currentTrial;
+  if(currentTrial == numTrials)
+    {document.querySelector("#nextButton").textContent = "Завершить";}
+  else
+    {document.querySelector("#nextButton").textContent = "Далее";}
+
+  // Получаем все элементы кругов
+  const circles = document.querySelectorAll(".circle");
+
+  // Перебираем круги и делаем соответствующее количество видимым
+  for (let i = 0; i < circles.length; i++) {
+    if (i < amountOfElements) {
+      circles[i].style.display = 'flex';
+    } else {
+      circles[i].style.display = 'none';
+    }
+  }
+
+
+  function updateTimer() {
+    let currentTime = new Date().getTime() - startTime;
+    let minutes = Math.floor(currentTime / 60000);
+    let seconds = Math.floor((currentTime % 60000) / 1000);
+    let milliseconds = currentTime % 1000;
+    timer.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}:${milliseconds.toString().padStart(3, "0")}`;
+  }
+
+  function nextTrial() {
+    currentTrial++;
+    localStorage.setItem("currentTrial", currentTrial);
+    if (currentTrial <= numTrials) {
+      window.location.href = "Experiment.html";
+    } else {
+      window.location.href = "Results.html";
+    }
+  }
+
+  window.addEventListener("keydown", function(event) {
+    if (event.code === "Space" && !isSpaceDown && !latentTime) {
+      isSpaceDown = true;
+      let randomValue = getRandomInt(1000, 3000);
+      reactionTimeout = setTimeout(showCircle, randomValue);
+    }
+  });
+
+  window.addEventListener("keyup", function(event) {
+    if (event.code === "Space" && !latentTime) {
+      clearTimeout(reactionTimeout);
+      isSpaceDown = false;
+      if (startTime) {
+        latentTime = Date.now() - startTime;
+        document.querySelector("p").style.display = "none";
+        document.querySelector("#latentTime").textContent = "Латентное время реакции: " + latentTime + " мс";
+      }
+    }
+  });
+
+	window.addEventListener("keydown", function(event) {
+    if (parseInt(event.key) === randomCircleNum && !motorTime && latentTime) {
+      motorTime = Date.now() - (startTime + latentTime);
+	    totalTime = motorTime + latentTime;
+	    document.querySelector("#motorTime").textContent = "Моторное время реакции: " + motorTime + " мс";
+	    document.querySelector("#totalTime").textContent = "Общее время реакции: " + totalTime + " мс";
+  		if (!localStorage.getItem("results")) {
+     			localStorage.setItem("results", JSON.stringify([]));
+  		}
+      clearInterval(intervalId);
+		  let result = {
+     		trial: currentTrial,
+     		latentTime: latentTime,
+    		motorTime: motorTime,
+    		totalTime: totalTime
+   		};
+		  // Получение текущих результатов из localStorage
+		  let savedResults = JSON.parse(localStorage.getItem("results"));
+   		savedResults.push(result);
+		  localStorage.setItem("results", JSON.stringify(savedResults));
+
+      document.querySelector("button").style.display = "flex";
+		  document.addEventListener("keydown", function(event) {
+  			if (event.code === "Enter") {
+  	  		nextTrial();
+  			}
+		  });
+  	}
+	});
+
+  function showCircle() {
+  const circleArray = JSON.parse(localStorage.getItem("circleArray"));
+  const randomIndex = Math.floor(Math.random() * circleArray.length);
+  randomCircleNum = circleArray[randomIndex];
+  const randomCircle = document.querySelector(`#circle${randomCircleNum}`);
+  randomCircle.style.display = "flex";
+  startTime = new Date().getTime();
+  intervalId = setInterval(updateTimer, 1);
+
+  // устанавливаем желаемый цвет фона для круга
+  randomCircle.style.backgroundColor = localStorage.getItem("color");
+}
+
+
+  function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+    </script>
+  </body>
+</html>
